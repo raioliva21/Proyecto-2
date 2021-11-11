@@ -12,7 +12,7 @@ def abrir_archivo(nombre_archivo = None):
         quit()
 
 
-def eliminar_datos_inutiles(archivo = None):
+def modificar_archivo(archivo = None):
 
     archivo = archivo.strip().split(",")
     archivo = archivo[0:8]
@@ -20,6 +20,37 @@ def eliminar_datos_inutiles(archivo = None):
     archivo.pop(5)
     
     return archivo
+
+def procesar_datos_archivo2 (archivo_2, pais, fecha):
+
+    fabricante_vacuna = []
+    numero_de_vacunas = []
+    vacunas_utilizadas = ""
+
+    # crear diccionario de archivo_2
+    # tal que llaves sean = '{pais}-{fecha} : fabricante_vacuna'
+
+    for linea in archivo_2:
+        linea = linea.strip().split(",")
+        if linea[0] == pais and linea[1] == fecha:
+            if linea[3] != "0":
+                fabricante_vacuna.append(linea[2])
+                numero_de_vacunas.append(linea[3])
+            else:
+                continue
+        else:
+            continue
+
+    for indice in range (0, len(fabricante_vacuna)):
+        vacunas_utilizadas += f"{fabricante_vacuna[indice]}({numero_de_vacunas[indice]}) "
+    
+    if fabricante_vacuna == [] and numero_de_vacunas == []:
+        vacunas_utilizadas = "Informacion no disponible"
+
+    print(vacunas_utilizadas)
+
+    return vacunas_utilizadas
+
 
 def procesar_archivos(archivo, archivo_2):
 
@@ -31,13 +62,11 @@ def procesar_archivos(archivo, archivo_2):
 
     for linea in range(0,total_lineas):
 
-        datos_de_pais = eliminar_datos_inutiles(datos_paises[linea])
+        datos_de_pais = modificar_archivo(datos_paises[linea])
         pais = datos_de_pais[0]
         fecha = datos_de_pais[1] 
-        fecha = fecha.strip().split("-")
-        anio = fecha[0]
-        mes = fecha[1]
-        dia = fecha[2]
+        vacunas_utilizadas = procesar_datos_archivo2(archivo_2, pais, fecha)
+
 
         for indice in range(2,5):
             if datos_de_pais[indice] == '':
@@ -50,14 +79,14 @@ def procesar_archivos(archivo, archivo_2):
             datos_de_pais[indice] = datos_de_pais[indice].split(".")
             datos_de_pais[indice] = datos_de_pais[indice][0]
 
-        num_absoluto_inmunizaciones = datos_de_pais[2]
-        num_total_vacunados = datos_de_pais[3]
-        num_total_personas_esq_completo = datos_de_pais[4]
-        num_vacunados_ese_dia = datos_de_pais[5]
+        # numero absoluto de inmunizaciones = datos_de_pais[2]
+        # numero total de vacunados = datos_de_pais[3]
+        # numero total de personas con esquema completo = datos_de_pais[4]
+        # numero de vacunados ese dia = datos_de_pais[5]
 
-        lista_de_datos = [num_absoluto_inmunizaciones, num_total_vacunados, num_total_personas_esq_completo, num_vacunados_ese_dia]
+        lista_de_datos = [datos_de_pais[2], datos_de_pais[3], datos_de_pais[4], datos_de_pais[5], vacunas_utilizadas ]
 
-        data_paises.update ({f"{pais}-{anio}-{mes}-{dia}" : lista_de_datos})
+        data_paises.update ({f"{pais}-{fecha}" : lista_de_datos})
 
     return data_paises
 
