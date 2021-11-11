@@ -41,9 +41,14 @@ def procesar_archivos(archivo, archivo_2):
 
         for indice in range(2,5):
             if datos_de_pais[indice] == '':
-                datos_de_pais[indice] = 'no existe registro para la fecha'
+                if indice != 4:
+                    datos_de_pais[indice] = 'no existe registro para la fecha'
+                else:
+                    datos_de_pais[indice] = '0.0'
             else:
                 pass
+            datos_de_pais[indice] = datos_de_pais[indice].split(".")
+            datos_de_pais[indice] = datos_de_pais[indice][0]
 
         num_absoluto_inmunizaciones = datos_de_pais[2]
         num_total_vacunados = datos_de_pais[3]
